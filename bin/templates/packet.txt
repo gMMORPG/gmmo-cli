@@ -1,0 +1,20 @@
+class_name $className extends Packet
+
+
+$variables
+
+
+func _init():
+    header = Packets.$packetName
+
+
+func serialize(writer: StreamPeerBuffer) -> void:
+    super.serialize(writer)
+
+
+func deserialize(reader: StreamPeerBuffer) -> void:
+    super.deserialize(reader)
+
+
+func handle(_tree: SceneTree, id: int = -1) -> void:
+    pass
