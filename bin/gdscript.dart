@@ -1,10 +1,5 @@
 class GDScript {
-  static String mapType(String type) {
-    if (type.startsWith('array[')) {
-      final innerType = type.substring(6, type.length - 1);
-      return 'Array[${innerType[0].toUpperCase()}${innerType.substring(1)}]';
-    }
-
+  static String mapSimpleType(String type) {
     switch (type.toLowerCase()) {
       case 'int':
         return 'int';
@@ -21,6 +16,25 @@ class GDScript {
       default:
         return 'Variant';
     }
+  }
+
+  static String mapType(String type) {
+    if (type.startsWith('array[')) {
+      final innerType = type.substring(6, type.length - 1);
+      return 'Array[${mapSimpleType(innerType)}]';
+    }
+
+    if (type.startsWith('dictionary[')) {
+      final types = type
+          .substring(10, type.length - 1)
+          .split(RegExp(r'[\s-]+'));
+      if (types.length == 2) {
+        return 'Dictionary[${mapSimpleType(types[0].trim())}, ${mapSimpleType(types[1].trim())}]';
+      }
+      return 'Dictionary';
+    }
+
+    return mapSimpleType(type);
   }
 
   static String generateVariables(List<String> attributes) {
