@@ -1,60 +1,70 @@
 import 'package:args/args.dart';
-import 'generators/packet.dart';
 import 'dart:io';
 import 'commands/help.dart';
+import 'commands/welcome.dart';
+import 'commands/generate_packet.dart';
+import 'commands/list_packets.dart';
+import 'commands/add_packet.dart';
 
 void main(List<String> arguments) {
   runCLI(arguments);
 }
 
 void runCLI(List<String> arguments) {
-  final parser =
+  final parser = ArgParser()
+    ..addCommand('help')
+    ..addCommand(
+      'generate',
       ArgParser()
-        ..addCommand('help')
-        ..addCommand('generate', ArgParser()..addCommand('packet'));
+        ..addCommand('client')
+        ..addCommand('server'),
+    )
+    ..addCommand(
+      'list',
+      ArgParser()..addCommand('packets'),
+    )
+    ..addCommand(
+      'add',
+      ArgParser()..addCommand('packets'),
+    );
 
-  final argResults = parser.parse(arguments);
-
-  if (argResults.command == null || argResults.command!.name == 'help') {
-    showHelp();
+  if (arguments.isEmpty) {
+    showWelcome();
     exit(0);
   }
 
-  switch (argResults.command!.name) {
-    case 'generate':
-      final ArgResults generateArgs = argResults.command!;
+  try {
+    final ArgResults argResults = parser.parse(arguments);
 
-      if (generateArgs.command?.name != 'packet') {
-        print('❌ Uso correto: gmmo generate packet <nome_do_pacote>');
-
-        exit(1);
-      }
-
-      final subCommand = generateArgs.command!.name;
-      final args = generateArgs.command!.rest;
-
-      if (args.isEmpty) {
-        print('❌ Uso correto: gmmo generate $subCommand <nome>');
-        exit(1);
-      }
-
-      final name = args[0];
-      final attributes = args.skip(1).toList();
-
-      switch (subCommand) {
-        case 'packet':
-          PacketGenerator().generate(name, attributes);
-          break;
-        default:
-          print(
-            '❌ Subcomando desconhecido. Use `gmmo --help` para ver os comandos.',
-          );
-          exit(1);
-      }
-
-      break;
-    default:
-      print('❌ Comando desconhecido. Use `gmmo --help` para ver os comandos.');
+    if (argResults.command == null) {
+      print('❌ Command not found. Use `gmmo --help` for help.');
       exit(1);
+    }
+
+    switch (argResults.command!.name) {
+      case 'help':
+        showHelp();
+        break;
+
+      case 'generate':
+        generatePacket(argResults);
+        break;
+
+      case 'list':
+        listPackets(argResults.command!);
+        break;
+
+      case 'add':
+        addPacket(argResults.command!);
+        break;
+
+      default:
+        print(
+            '❌ Unknown command. Use `gmmo --help` to see available commands.');
+        exit(1);
+    }
+  } catch (e) {
+    print('❌ Error: Invalid command or arguments. Please check your input.');
+    exit(1);
   }
 }

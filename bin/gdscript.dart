@@ -25,9 +25,8 @@ class GDScript {
     }
 
     if (type.startsWith('dictionary[')) {
-      final types = type
-          .substring(10, type.length - 1)
-          .split(RegExp(r'[\s-]+'));
+      final types =
+          type.substring(10, type.length - 1).split(RegExp(r'[\s-]+'));
       if (types.length == 2) {
         return 'Dictionary[${mapSimpleType(types[0].trim())}, ${mapSimpleType(types[1].trim())}]';
       }
@@ -38,31 +37,29 @@ class GDScript {
   }
 
   static String generateVariables(List<String> attributes) {
-    return attributes
-        .map((attr) {
-          final parts = attr.split(':');
-          if (parts.length != 2) {
-            return '';
-          }
+    return attributes.map((attr) {
+      final parts = attr.split(':');
+      if (parts.length != 2) {
+        return '';
+      }
 
-          final varName = parts[0];
-          final type = mapType(parts[1]);
+      final varName = parts[0];
+      final type = mapType(parts[1]);
 
-          if (type.startsWith('Array')) {
-            return 'var $varName: $type = []';
-          }
+      if (type.startsWith('Array')) {
+        return 'var $varName: $type = []';
+      }
 
-          if (type.startsWith('Dictionary')) {
-            return 'var $varName: $type = {}';
-          }
+      if (type.startsWith('Dictionary')) {
+        return 'var $varName: $type = {}';
+      }
 
-          final defaultValue = defaultValueForType(type);
-          return 'var $varName: $type = $defaultValue';
-        })
-        .join('\n');
+      final defaultValue = getDefaultValueForType(type);
+      return 'var $varName: $type = $defaultValue';
+    }).join('\n');
   }
 
-  static String defaultValueForType(String type) {
+  static String getDefaultValueForType(String type) {
     switch (type) {
       case 'int':
         return '-1';

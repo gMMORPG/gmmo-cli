@@ -1,15 +1,21 @@
+import 'dart:io';
+
 void showHelp() {
   print('''
-gmmo - Gerador de código para GDScript 🚀
+🚀 GMMO CLI Help:
 
-Uso:
-  gmmo <comando> [opções]
+Commands:
+  generate <client|server> <packet_name> [attributes]   # Generate a packet
+  list packets                                          # List all packets in the enum
+  add packets <packet_name>                             # Add a new packet
 
-Comandos disponíveis:
-  generate packet <nome>  - Gera um pacote GDScript
-  help                    - Mostra esta ajuda
+Examples:
+  gmmo generate client player id:int name:string
+  gmmo generate server enemy id:int health:float array:float
+  
+  gmmo add packets ONE
+  gmmo add packets ONE TWO THREE
 
-Exemplo:
-  gmmo generate packet MeuPacote
 ''');
+  exit(0);
 }
