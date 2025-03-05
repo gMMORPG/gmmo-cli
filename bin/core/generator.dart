@@ -11,7 +11,8 @@ class PacketGenerator {
       : outputDir = isServer ? './server/core' : './client/core';
 
   void generate(String name, [List<String> attributes = const []]) {
-    final className = Utils.toCamelCase(name);
+    final prefix = isServer ? 'S' : 'C';
+    final className = '$prefix${Utils.toCamelCase(name)}';
     final packetName = name.toUpperCase();
     final packageDir = '$outputDir/$name';
     final filePath = '$packageDir/core.gd';
@@ -37,7 +38,8 @@ func deserialize(reader: StreamPeerBuffer) -> void:
 
 
 func handle(_tree: SceneTree, id: int = -1) -> void:
-    pass
+    if id == -1:
+		  return
 ''';
 
     File(filePath).writeAsStringSync(template);
