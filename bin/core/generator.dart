@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import '../gdscript.dart';
 import '../utils.dart';
 
@@ -21,25 +20,41 @@ class PacketGenerator {
 
     final variables = GDScript.generateVariables(attributes);
 
+    final parameters = attributes.map((attr) {
+      final parts = attr.split(':');
+      if (parts.length != 2) return '';
+      final varName = parts[0];
+      final type = GDScript.mapType(parts[1]);
+      return '$varName: $type';
+    }).join(', ');
+
+    final handleSignature = isServer
+        ? 'func handle($parameters, tree: SceneTree, peer_id: int) -> void'
+        : 'func handle($parameters, tree: SceneTree) -> void';
+
+    final assignments = attributes.map((attr) {
+      final varName = attr.split(':')[0];
+      return '\tself.$varName = $varName';
+    }).join('\n');
+
+    final multiplayerCall = isServer
+        ? '\tMultiplayer.server.send_to(peer_id, header, [])'
+        : '\tMultiplayer.client.send(header, [])';
+
     final template = '''
-class_name $className extends Packet
-${variables.isNotEmpty ? '\n\n$variables\n' : ''}
-
-func _init():
-    header = Packets.$packetName
+class_name $className extends RefCounted
 
 
-func serialize(writer: StreamPeerBuffer) -> void:
-    super.serialize(writer)
+var header = Packets.$packetName
 
 
-func deserialize(reader: StreamPeerBuffer) -> void:
-    super.deserialize(reader)
+$variables
 
 
-func handle(_tree: SceneTree, id: int = -1) -> void:
-    if id == -1:
-		  return
+$handleSignature:
+$assignments
+
+$multiplayerCall
 ''';
 
     File(filePath).writeAsStringSync(template);

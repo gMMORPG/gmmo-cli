@@ -13,6 +13,10 @@ class GDScript {
         return 'Array';
       case 'dictionary':
         return 'Dictionary';
+      case 'vector3':
+        return 'Vector3';
+      case 'vector2':
+        return 'Vector2';
       default:
         return 'Variant';
     }
@@ -33,6 +37,8 @@ class GDScript {
       return 'Dictionary';
     }
 
+    print(type);
+
     return mapSimpleType(type);
   }
 
@@ -45,21 +51,17 @@ class GDScript {
 
       final varName = parts[0];
       final type = mapType(parts[1]);
-
-      if (type.startsWith('Array')) {
-        return 'var $varName: $type = []';
-      }
-
-      if (type.startsWith('Dictionary')) {
-        return 'var $varName: $type = {}';
-      }
-
       final defaultValue = getDefaultValueForType(type);
+
       return 'var $varName: $type = $defaultValue';
     }).join('\n');
   }
 
   static String getDefaultValueForType(String type) {
+    if (type.startsWith('Array[')) {
+      return '[]';
+    }
+
     switch (type) {
       case 'int':
         return '-1';
@@ -69,6 +71,14 @@ class GDScript {
         return '0.0';
       case 'bool':
         return 'false';
+      case 'Array':
+        return '[]';
+      case 'Dictionary':
+        return '{}';
+      case 'Vector3':
+        return 'Vector3.ZERO';
+      case 'Vector2':
+        return 'Vector2.ZERO';
       default:
         return 'null';
     }
