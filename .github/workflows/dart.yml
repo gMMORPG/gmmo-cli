@@ -28,9 +28,3 @@ jobs:
 
       - name: Build project (compile)
         run: dart compile exe bin/main.dart -o bin/gmmo.exe
-
-      - name: Upload compiled binary as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: server-executable
-          path: bin/gmmo.exe
