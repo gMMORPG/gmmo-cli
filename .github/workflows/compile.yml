@@ -1,33 +1,37 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Dart
+name: Build Dart Project
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main  # Ou qualquer outra branch que você use
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # Passo 1: Verificar o código
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      # Passo 2: Configurar o ambiente Dart
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
 
+      # Passo 3: Instalar dependências
       - name: Install dependencies
         run: dart pub get
 
+      # Passo 4: Compilar o projeto Dart para binário
       - name: Build Dart project
-        run: dart compile exe bin/main.dart -o build/gmmo
+        run: dart compile exe bin/main.dart -o build/my_project
 
+      # Passo 5: Criar artefatos para download
       - name: Upload Dart binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dart-binary
-          path: build/gmmo
+          path: build/my_project
