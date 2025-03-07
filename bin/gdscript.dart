@@ -37,8 +37,6 @@ class GDScript {
       return 'Dictionary';
     }
 
-    print(type);
-
     return mapSimpleType(type);
   }
 

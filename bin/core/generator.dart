@@ -13,10 +13,9 @@ class PacketGenerator {
     final prefix = isServer ? 'S' : 'C';
     final className = '$prefix${Utils.toCamelCase(name)}';
     final packetName = name.toUpperCase();
-    final packageDir = '$outputDir/$name';
-    final filePath = '$packageDir/core.gd';
+    final filePath = '$outputDir/${name.toLowerCase()}.gd';
 
-    Directory(packageDir).createSync(recursive: true);
+    Directory(outputDir).createSync(recursive: true);
 
     final variables = GDScript.generateVariables(attributes);
 
