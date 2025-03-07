@@ -4,7 +4,7 @@ void showWelcome() {
   print('''
 🚀 Welcome to GMMO CLI!
 
-Version: v0.0.2
+Version: v0.0.3
 
 🔗 GitHub: https://github.com/gMMORPG/gmmo-cli
 

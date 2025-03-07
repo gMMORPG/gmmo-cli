@@ -40,21 +40,6 @@ class GDScript {
     return mapSimpleType(type);
   }
 
-  static String generateVariables(List<String> attributes) {
-    return attributes.map((attr) {
-      final parts = attr.split(':');
-      if (parts.length != 2) {
-        return '';
-      }
-
-      final varName = parts[0];
-      final type = mapType(parts[1]);
-      final defaultValue = getDefaultValueForType(type);
-
-      return 'var $varName: $type = $defaultValue';
-    }).join('\n');
-  }
-
   static String getDefaultValueForType(String type) {
     if (type.startsWith('Array[')) {
       return '[]';
